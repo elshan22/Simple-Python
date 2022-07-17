@@ -1,11 +1,12 @@
 #lang racket
 
 (require "eopl_errors.rkt")
-(require "environment.rkt")
+(require "env_store.rkt")
 (require "datatypes.rkt")
 (require "parser.rkt")
 (require "lexer.rkt")
 (require (lib "eopl.ss" "eopl"))
+(require try-catch)
 
 
 (define lex (lambda (lexer input) (lambda () (lexer input))))
@@ -22,7 +23,7 @@
 (define value-of-statement (lambda (sttmnt env) (cases statement sttmnt
                                                   (compound-statement (cmp) (value-of-compound cmp env))
                                                   (simple-statement (smpl) (value-of-simple smpl env)))))
-
+;TODO
 (define value-of-simple (lambda (smpl env) (cases simple smpl
                                              (assignment-statement (assign) (value-of-assignment assign env))
                                              (global-statement (glbl) (value-of-global glbl env))
@@ -35,3 +36,14 @@
                                               (function-definition (func) (value-of-function func env))
                                               (if-statement (if-stmt) (value-of-if if-stmt env))
                                               (for-statement (for-stmt) (value-of-for for-stmt env)))))
+; needs try-catch package to run the code !
+(define value-of-assignment (lambda (assign env) (cases assignment assign
+                                                   (an-assignment (var exp) (cases ATOM var
+                                                                              (id-exp (name) (let ((val (value-of-expression exp)))
+                                                                                               (try [(let ((loc (apply-env var env))))
+                                                                                                   (setref! loc (car val)) (list 'assignment env)]
+                                                                                                  [catch (void (let ((loc (newref (car val))))
+                                                                                             (list 'assignment (extend-env var (car val) (cdr val)))))])))
+                                                                              (else (report-invalid-lhs! var)))))))
+
+

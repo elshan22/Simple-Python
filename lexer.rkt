@@ -6,7 +6,7 @@
 
 (define full-lexer (lexer
    (whitespace (full-lexer input-port))
-   ((:or (:: (:? #\-) (:+ (char-range #\0 #\9))) (:: (:? #\-) (:: (:+ (char-range #\0 #\9)) #\. (:+ (char-range #\0 #\9))))) (token-NUM (string->number lexeme)))
+   ((:or (:: (:+ (char-range #\0 #\9))) (:: (:: (:+ (char-range #\0 #\9)) #\. (:+ (char-range #\0 #\9))))) (token-NUM (string->number lexeme)))
    ((eof) (token-EOF))
    (";" (token-SEMICOLON))
    ("pass" (token-PASS))
