@@ -69,11 +69,11 @@
   (comp-exp (comp comparison?)))
 
 (define-datatype comparison comparison?
-  (equal-sum (eq-exp eq-exp?))
-  (lessthan-sum (lt-exp lt-exp?))
-  (lessthanorequal-sum (let-exp let-exp?))
-  (greaterthan-sum (gt-exp gt-exp?))
-  (greaterthanorequal-sum (get-exp get-exp?))
+  (equal-sum (eq eq-exp?))
+  (lessthan-sum (lt lt-exp?))
+  (lessthanorequal-sum (let let-exp?))
+  (greaterthan-sum (gt gt-exp?))
+  (greaterthanorequal-sum (get get-exp?))
   (sum-expression (sum sum-exp?)))
 
 (define-datatype eq-exp eq-exp?

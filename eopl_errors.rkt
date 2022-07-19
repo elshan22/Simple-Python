@@ -94,4 +94,10 @@
 
 (define (report-invalid-lhs! var) (eopl:error 'invalid-LHS "\n\texpected a variable as left hand side of an assignment.\n\tprovided: ~s" (var->string var)))
 
+(define (report-nonbool-type! exp) (eopl:error 'invalid-type "\n\texpected a boolean value. provided ~s" (expression->string exp))) ; need to work on input
+
+(define (report-nan-type! exp) (eopl:error 'invalid-type "\n\texpected a number. provided ~s" (expression->string exp))) ; need to work on input
+
+(define (report-nonlist-type! exp) (eopl:error 'invalid-type "\n\texpected a list. provided ~s" (expression->string exp))) ; need to work on input
+
 (provide (all-defined-out))
