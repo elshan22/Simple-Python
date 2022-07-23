@@ -103,7 +103,7 @@
 
 (define (report-invalid-type! des pro) (eopl:error 'invalid-type "\n\texpected a ~s variable. provided: ~s" des (val->string pro)))
 
-(define (report-divide-by-zero! exp) (eopl:error 'divide-by-zero "\n\tthe result of the divisor (~s) is zero." (expression->string exp)))
+(define (report-divide-by-zero! exp) (eopl:error 'divide-by-zero "\n\tthe result of the divisor (~s) is zero." (factor->string exp)))
 
 (define (report-index-out-of-bound! prim exp size) (eopl:error 'index-out-of-bound "\n\tthe value of ~s (~s) is out of bound for list with length ~s" (expression->string exp) size prim))
 

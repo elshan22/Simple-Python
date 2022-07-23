@@ -19,7 +19,7 @@
 (define listexp->racketlist (lambda (array) (cond [(null? array) null]
                                                   [else (append (list (expval->racketval (car array))) (listexp->racketlist (cdr array)))])))
 
-(define expval->racketval (lambda (val) (cases expval val (bool-val (bool) bool) (num-val (num) num) (list-val (array)
+(define expval->racketval (lambda (val) (cases expval val (bool-val (bool) (if bool "True" "False")) (num-val (num) num) (list-val (array)
                                                           (listexp->racketlist array)) (none-val () ""))))
 
 (define is-function (lambda (exp) (cases expression exp (an-expression (dis) (cases disjunction dis (conjunction-exp (con) (cases conjunction con

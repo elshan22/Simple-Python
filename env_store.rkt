@@ -42,7 +42,7 @@
 
 (define extend-env (lambda (var val env) (extend-environment var val env)))
 
-(define function-env (lambda (name func) (extend-env name (newref (function-thunk func)) (empty-environment))))
+(define function-env (lambda (name func) (extend-env name (newref (function-thunk func)) (empty-env))))
 
 (define empty-env (lambda () (extend-env (id-exp "print") (newref PRINT_FUNC) (empty-environment))))
 
