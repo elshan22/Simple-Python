@@ -3,9 +3,10 @@
 (require (lib "eopl.ss" "eopl"))
 (require "datatypes.rkt")
 
+
 (define var->string (lambda (var) (cases ATOM var
                                     (id-exp (name) name)
-                                    (num-exp (num) (number->string num))
+                                    (num-exp (num) (number->string (cases expval num (num-val (num) num) (else ""))))
                                     (list-expression (l) (string-append "list : " (list-exp->string l)))
                                     (true-exp () "True")
                                     (false-exp () "False")
@@ -86,6 +87,12 @@
                                       (an-argument (arg) (expression->string arg))
                                       (some-arguments (args arg) (string-append (args->string args) ", " (expression->string arg))))))
 
+(define val->string (lambda (val) (cases expval val
+                                    (num-val (num) 'number)
+                                    (bool-val (bool) 'boolean)
+                                    (list-val (array) 'list)
+                                    (none-val () 'none))))
+
 (define (report-no-binding-found! var) (eopl:error 'binding-dismatch "\n\tidentifier ~s is used before its declaration!" (var->string var)))
 
 (define (report-invalid-reference!) (eopl:error 'invalid-reference "\n\tillegal reference to memory!"))
@@ -94,10 +101,14 @@
 
 (define (report-invalid-lhs! var) (eopl:error 'invalid-LHS "\n\texpected a variable as left hand side of an assignment.\n\tprovided: ~s" (var->string var)))
 
-(define (report-nonbool-type! exp) (eopl:error 'invalid-type "\n\texpected a boolean value. provided ~s" (expression->string exp))) ; need to work on input
+(define (report-invalid-type! des pro) (eopl:error 'invalid-type "\n\texpected a ~s variable. provided: ~s" des (val->string pro)))
 
-(define (report-nan-type! exp) (eopl:error 'invalid-type "\n\texpected a number. provided ~s" (expression->string exp))) ; need to work on input
+(define (report-divide-by-zero! exp) (eopl:error 'divide-by-zero "\n\tthe result of the divisor (~s) is zero." (expression->string exp)))
 
-(define (report-nonlist-type! exp) (eopl:error 'invalid-type "\n\texpected a list. provided ~s" (expression->string exp))) ; need to work on input
+(define (report-index-out-of-bound! prim exp size) (eopl:error 'index-out-of-bound "\n\tthe value of ~s (~s) is out of bound for list with length ~s" (expression->string exp) size prim))
+
+(define (report-invalid-cast! from to) (eopl:error 'invalid-cast "\n\tcannot cast from ~s to ~s datatype!" from to))
+
+(define (report-too-many-arguments!) (eopl:error 'too-many-arguments "\n\ttoo many arguments in function call!"))
 
 (provide (all-defined-out))

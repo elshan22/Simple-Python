@@ -20,6 +20,6 @@
 (define (run-program pgm)
   (cond
     [(boolean? pgm) "There is nothing to execute!"]
-    [(string? pgm) (run pgm)]))
+    [(string? pgm) (begin (run pgm) "")]))
 
 (printf "~a\n" (run-program (my-program)))

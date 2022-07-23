@@ -94,7 +94,7 @@
      ((arguments COMMA expression) (some-arguments $1 $3)))
     (atom
      ((ID) (id-exp $1))
-     ((NUM) (num-exp $1))
+     ((NUM) (num-exp (num-val $1)))
      ((List) (list-expression $1))
      ((TRUE) (true-exp))
      ((FALSE) (false-exp))

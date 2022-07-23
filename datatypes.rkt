@@ -122,7 +122,7 @@
 
 (define-datatype ATOM ATOM?
   (id-exp (name string?))
-  (num-exp (num number?))
+  (num-exp (num expval?))
   (list-expression (l list-exp?))
   (true-exp)
   (false-exp)
@@ -135,5 +135,27 @@
 (define-datatype expressions expressions?
   (an-exp (exp expression?))
   (some-exps (exps expressions?) (exp expression?)))
+
+; Thunk (Lazy evaluation)
+(define-datatype exp-thunk exp-thunk?
+ (expression-thunk (exp expression?) (glob_env environment?) (curr_env environment?)))
+(define-datatype func-thunk func-thunk?
+  (function-thunk (func function?)))
+
+(define-datatype expval expval?
+ (num-val (num number?))
+ (bool-val (bool boolean?))
+ (list-val (array list?))
+ (none-val))
+
+(define-datatype func func?
+  (a-func (name ATOM?) (args arguments-exp?) (body statements?)))
+
+(define-datatype for for?
+  (a-for (var ATOM?) (iterator list-exp?) (body statements?)))
+
+(define-datatype environment environment?
+  (empty-environment)
+  (extend-environment (var ATOM?) (val expval?) (env environment?)))
 
 (provide (all-defined-out))
