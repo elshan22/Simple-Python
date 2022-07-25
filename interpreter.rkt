@@ -22,12 +22,12 @@
 (define expval->racketval (lambda (val) (cases expval val (bool-val (bool) (if bool "True" "False")) (num-val (num) num) (list-val (array)
                                                           (listexp->racketlist array)) (none-val () ""))))
 
-(define is-function (lambda (exp) (cases expression exp (an-expression (dis) (cases disjunction dis (conjunction-exp (con) (cases conjunction con
+(define is-print (lambda (exp) (cases expression exp (an-expression (dis) (cases disjunction dis (conjunction-exp (con) (cases conjunction con
                                     (inversion-exp (inv) (cases inversion inv (comp-exp (comp) (cases comparison comp (sum-expression (sum)
                                     (cases sum-exp sum (term-expression (term) (cases term-exp term (factor-expression (factor) (cases factor-exp factor
                                     (power-expression (pow) (cases power-exp pow (primary-expression (prim) (cases primary-exp prim
-                                    (func-call (prima args) prim) (func-call-noargs (prima) prim)
-                                    (else #f))) (else #f))) (else #f))) (else #f))) (else #f))) (else #f))) (else #f))) (else #f))) (else #f))))))
+                                    (func-call (prima args) (cases primary-exp prima (atom-exp (var) (cases ATOM var (id-exp (name) (if (equal? name "print") prim #f))
+               (else #f))) (else #f))) (else #f))) (else #f))) (else #f))) (else #f))) (else #f))) (else #f))) (else #f))) (else #f))) (else #f))))))
 
 (define primary->ATOM (lambda (val) (cases primary-exp val (atom-exp (var) var) (else (report-invalid-cast! 'Primary 'ATOM)))))
  
@@ -38,8 +38,7 @@
 
 (define lex (lambda (lexer input) (lambda () (lexer input))))
 (define run (lambda (str) (value-of-program (full-parser (lex full-lexer (open-input-string str))))))
-(define pa (lambda (str) (full-parser (lex full-lexer (open-input-string str)))))
-(define execute (lambda (file_input) (run (open-input-file file_input))))
+(define execute (lambda (file_input) (value-of-program (full-parser (lex full-lexer (open-input-file file_input))))))
 
 ; program
 (define value-of-program (lambda (pgm) (cases program pgm
@@ -74,15 +73,14 @@
 (define value-of-assignment (lambda (assign glob_env curr_env) (cases assignment assign
                                                    (an-assignment (var exp) (cases ATOM var
                                                                               (id-exp (name) (try [(let ((loc (apply-env var curr_env))
-                                                                                                         (func (is-function exp)))
-                                                                                                   (if (not (equal? func #f))
-                                                                                                   (begin
+                                                                                                         (func (is-print exp)))
+                                                                                                   (if func (begin
                                                                                                    (setref! loc (value-of-primary func glob_env curr_env))
                                                                                                    (list 'assignment glob_env curr_env))
                                                                                                    (begin (setref! loc (expression-thunk exp glob_env curr_env))
                                                                                                    (list 'assignment glob_env curr_env))))]
-                                                                                                  [catch (void (let ((func (is-function exp)))
-                                                                                             (if (not (equal? func #f))
+                                                                                                  [catch (void (let ((func (is-print exp)))
+                                                                                             (if func
                                                                                              (let ((loc (newref (value-of-primary func glob_env curr_env))))
                                                                                              (list 'assignment glob_env (extend-env var loc curr_env)))
                                                                                              (let ((loc (newref (expression-thunk exp glob_env curr_env))))
